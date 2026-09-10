@@ -1,0 +1,211 @@
+/* Sales page. Loaded only on this route, alongside home.css for the shared
+   .container / .row / .section__title helpers Frontend Simplified supplies. */
+
+.plan {
+  padding-bottom: 40px;
+}
+.plan__header--wrapper {
+  padding: 48px 0 32px;
+  border-bottom-left-radius: 16rem;
+  border-bottom-right-radius: 16rem;
+  background: var(--color-ink);
+  color: #fff;
+  text-align: center;
+}
+.plan__header {
+  max-width: 1070px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.plan__title {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.plan__sub--title {
+  max-width: 640px;
+  margin: 0 auto 32px;
+  font-size: 20px;
+}
+.plan__img--mask {
+  width: 340px;
+  max-width: 100%;
+  margin: 0 auto;
+  border-top-left-radius: 12rem;
+  border-top-right-radius: 12rem;
+  overflow: hidden;
+}
+.plan__img--mask img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plan__features--wrapper {
+  display: flex;
+  gap: 40px;
+  margin: 40px 0;
+  text-align: center;
+}
+.plan__features {
+  flex: 1;
+}
+.plan__features--icon {
+  margin: 0 auto 12px;
+  font-size: 40px;
+  color: var(--color-ink);
+}
+.plan__features--text {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.plan__card {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  padding: 24px;
+  margin: 0 auto;
+  max-width: 680px;
+  border: 4px solid #bac8ce;
+  border-radius: 4px;
+  background: var(--color-page-alt);
+  text-align: left;
+  cursor: pointer;
+}
+.plan__card--active {
+  border-color: var(--color-ink);
+}
+.plan__card--circle {
+  flex: 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 4px;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+}
+.plan__card--dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-ink);
+}
+.plan__card--title {
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+.plan__card--price {
+  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+}
+.plan__card--text {
+  font-size: 14px;
+  color: #6b757b;
+}
+.plan__card--separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 680px;
+  margin: 16px auto;
+}
+.plan__separator--line {
+  flex: 1;
+  height: 1px;
+  background: #bac8ce;
+}
+.plan__separator--text {
+  font-size: 14px;
+  color: #6b757b;
+}
+
+.plan__cta--wrapper {
+  position: sticky;
+  bottom: 0;
+  padding: 24px 0;
+  background: #fff;
+  text-align: center;
+}
+.plan__cta--btn {
+  max-width: 300px;
+  margin: 0 auto 8px;
+}
+.plan__disclaimer {
+  font-size: 12px;
+  color: #6b757b;
+}
+
+/* ---------- faq accordion ---------- */
+.faq__wrapper {
+  max-width: 800px;
+  margin: 40px auto 0;
+}
+.faq {
+  border-bottom: 1px solid #ddd;
+}
+.faq__title--wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.faq__title {
+  font-size: 24px;
+  font-weight: 500;
+}
+.faq__icon {
+  display: flex;
+  font-size: 40px;
+}
+.faq__answer--wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq--open .faq__answer--wrapper {
+  max-height: 500px;
+}
+.faq__answer {
+  padding-bottom: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .plan__title {
+    font-size: 28px;
+  }
+  .plan__features--wrapper {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .plan__header--wrapper {
+    border-bottom-left-radius: 6rem;
+    border-bottom-right-radius: 6rem;
+  }
+  .faq__title {
+    font-size: 18px;
+  }
+}
+
+.plan__notice {
+  max-width: 300px;
+  margin: 8px auto 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--color-banner);
+  font-size: 13px;
+}
