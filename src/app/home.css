@@ -131,6 +131,25 @@ button:disabled {
   cursor: pointer;
 }
 
+.nav__list--cta {
+  cursor: pointer;
+}
+
+.nav__list--cta a {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background: #2bd97c;
+  color: #032b41;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 100ms;
+}
+
+.nav__list--cta a:hover {
+  background: #20ba68;
+}
+
 /* LANDING */
 .landing__wrapper {
   display: flex;

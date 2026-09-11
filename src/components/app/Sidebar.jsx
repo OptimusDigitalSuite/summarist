@@ -12,10 +12,10 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 import { HiOutlineCog, HiOutlineLogout, HiOutlineLogin } from "react-icons/hi";
-import { RiQuestionMark } from "react-icons/ri";
+import { RiQuestionMark, RiVipCrownLine } from "react-icons/ri";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { openLogin } from "@/redux/modalSlice";
-import { selectIsSignedIn } from "@/redux/userSlice";
+import { selectIsSignedIn, selectIsSubscribed } from "@/redux/userSlice";
 
 // Seven items, per the documentation: For you, Library, Highlights, Search,
 // Settings, Help & Support, then Login/Logout pinned to the bottom.
@@ -38,6 +38,7 @@ export default function Sidebar({ open = false, onNavigate }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const signedIn = useSelector(selectIsSignedIn);
+  const subscribed = useSelector(selectIsSubscribed);
 
   const onAuthClick = async () => {
     onNavigate?.();
@@ -60,6 +61,25 @@ export default function Sidebar({ open = false, onNavigate }) {
           {TOP.map((item) => (
             <Item key={item.label} item={item} pathname={pathname} onNavigate={onNavigate} />
           ))}
+
+          {/* Someone already paying has nothing to buy, so the plans link is
+              only here for everyone else — including guests, who need a way to
+              reach pricing without hunting for a premium book first. */}
+          {!subscribed && (
+            <Link
+              href="/choose-plan"
+              className={`sidebar__link--wrapper sidebar__link--cta${
+                pathname === "/choose-plan" ? " sidebar__link--active" : ""
+              }`}
+              onClick={onNavigate}
+            >
+              <div className="sidebar__link--line" />
+              <div className="sidebar__icon--wrapper">
+                <RiVipCrownLine />
+              </div>
+              <div className="sidebar__link--text">Join Summarist</div>
+            </Link>
+          )}
         </div>
 
         <div className="sidebar__bottom">

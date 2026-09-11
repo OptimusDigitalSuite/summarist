@@ -75,6 +75,15 @@
   align-items: center;
   font-size: 22px;
 }
+/* The one paid call to action in the shell, so it carries the brand colour
+   rather than sitting in the grey run of navigation links. */
+.sidebar__link--cta {
+  color: #032b41;
+  font-weight: 500;
+}
+.sidebar__link--cta .sidebar__icon--wrapper {
+  color: #2bd97c;
+}
 
 /* ---------- main column ---------- */
 .app__main {

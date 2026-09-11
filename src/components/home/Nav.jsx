@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { openLogin } from "@/redux/modalSlice";
 
@@ -14,6 +15,11 @@ export default function Nav() {
           <Image className="nav__img" src="/assets/logo.png" alt="logo" width={200} height={40} style={{ width: "auto", height: "40px" }} priority />
         </figure>
         <ul className="nav__list--wrapper">
+          {/* The plans page is public on purpose: someone deciding whether to
+              pay should be able to read the pricing before making an account. */}
+          <li className="nav__list nav__list--cta">
+            <Link href="/choose-plan">Join Summarist</Link>
+          </li>
           <li className="nav__list nav__list--login" onClick={() => dispatch(openLogin())}>
             Login
           </li>
