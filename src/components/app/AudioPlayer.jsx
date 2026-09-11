@@ -19,18 +19,31 @@ export default function AudioPlayer({ book, onFinished }) {
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(NaN);
+  const [error, setError] = useState(null);
 
   // Every piece of state here is set from an <audio> event rather than an
   // effect, so React never has to reconcile a guess against the element.
-  const toggle = () => {
+  //
+  // `playing` in particular is driven by the element's own play/pause events,
+  // not set optimistically here: audio.play() returns a promise that can
+  // reject, and flipping the button to "pause" before knowing whether playback
+  // actually started leaves the UI claiming something the browser never did.
+  const toggle = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+    setError(null);
     if (audio.paused) {
-      audio.play();
-      setPlaying(true);
+      try {
+        await audio.play();
+      } catch (err) {
+        setError(
+          err?.name === "NotAllowedError"
+            ? "Your browser blocked playback. Press play again."
+            : "This audio could not be played."
+        );
+      }
     } else {
       audio.pause();
-      setPlaying(false);
     }
   };
 
@@ -56,6 +69,9 @@ export default function AudioPlayer({ book, onFinished }) {
         preload="metadata"
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
         onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onError={() => setError("This audio could not be loaded.")}
         onEnded={() => {
           setPlaying(false);
           onFinished?.();
@@ -88,6 +104,12 @@ export default function AudioPlayer({ book, onFinished }) {
           <MdForward10 />
         </button>
       </div>
+
+      {error && (
+        <div role="alert" className="audio__error">
+          {error}
+        </div>
+      )}
 
       <div className="audio__progress--wrapper">
         <div className="audio__time">{formatTime(currentTime)}</div>

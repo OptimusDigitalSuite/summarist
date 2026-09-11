@@ -63,11 +63,26 @@ live API returns an **array of one**. `booksApi` unwraps either shape.
 `userSlice.status` is four-valued on purpose — `loading`, `signedOut`, `guest`, `authenticated`.
 "Still asking Firebase" and "definitely nobody" look identical if you only store `user`.
 
+## Payments
+
+Stripe runs in **test mode** — no business details, no real charges. Two products, created via
+the API (`Premium Plus Yearly` $99.99/yr with a **7-day trial**, `Premium Monthly` $9.99/mo).
+
+Checkout goes through **Next API routes with the Stripe SDK**, not the Firebase Stripe
+extension — the extension needs the Blaze plan and a card on file with Google, and the brief
+only requires two working subscriptions.
+
+- `POST /api/checkout` — creates a Checkout Session and returns its URL. `client_reference_id`
+  carries the Firebase uid, which is the only link between a Firebase user and a Stripe
+  subscription.
+- `GET /api/subscription?uid=` — reads the plan back. Webhooks would need a public URL and a
+  signing secret; asking Stripe on load is the right trade at this size. `trialing` counts as
+  subscribed, which is the point of the trial.
+
+Test card: **4242 4242 4242 4242**, any future expiry, any CVC.
+
 ## Still to build
 
-- `/choose-plan` — design, plan switch, accordion, Stripe via the Firebase extension
-  (annual plan needs a 7-day trial). **Needs Bill's Stripe account.** Until it exists, every
-  premium book correctly routes here and 404s.
 - Optional polish: the home page's active-heading effect
 
 ## Before it runs

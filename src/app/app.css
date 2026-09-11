@@ -777,3 +777,13 @@
     margin-left: 0;
   }
 }
+
+.audio__error {
+  grid-column: 1 / -1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #7a2019;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+}

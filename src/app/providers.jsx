@@ -5,7 +5,7 @@ import { Provider, useDispatch } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { store } from "@/redux/store";
 import { getFirebaseAuth } from "@/lib/firebase";
-import { setUser, clearUser } from "@/redux/userSlice";
+import { setUser, clearUser, setSubscription } from "@/redux/userSlice";
 
 // Single subscription to Firebase, mirrored into Redux. Lives inside <Provider>
 // so it can dispatch; unsubscribes on unmount so hot reload does not stack
@@ -29,6 +29,14 @@ function AuthListener({ children }) {
           isAnonymous: firebaseUser.isAnonymous,
         })
       );
+
+      // Ask the server what this user has paid for. Failing quietly is right:
+      // a Stripe outage should leave someone on the basic plan, not break the
+      // app for them.
+      fetch(`/api/subscription?uid=${firebaseUser.uid}`)
+        .then((r) => r.json())
+        .then((data) => dispatch(setSubscription(data.plan ?? null)))
+        .catch(() => {});
     });
 
     return () => unsubscribe();

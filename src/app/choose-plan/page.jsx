@@ -11,7 +11,7 @@ import "./plan.css";
 import Footer from "@/components/home/Footer";
 import Accordion from "@/components/plan/Accordion";
 import { openLogin } from "@/redux/modalSlice";
-import { selectIsSignedIn, selectAuthLoading } from "@/redux/userSlice";
+import { selectIsSignedIn, selectAuthLoading, selectUser } from "@/redux/userSlice";
 
 // The sales page deliberately sits OUTSIDE the (app) route group, because the
 // documentation says the sidebar and search bar appear everywhere except here
@@ -69,21 +69,34 @@ export default function ChoosePlanPage() {
   const dispatch = useDispatch();
   const signedIn = useSelector(selectIsSignedIn);
   const authLoading = useSelector(selectAuthLoading);
+  const user = useSelector(selectUser);
   const [selected, setSelected] = useState("yearly");
   const [notice, setNotice] = useState(null);
+  const [busy, setBusy] = useState(false);
 
   const plan = PLANS.find((p) => p.id === selected);
 
-  const onSubscribe = () => {
-    if (authLoading) return;
+  const onSubscribe = async () => {
+    if (authLoading || busy) return;
     if (!signedIn) {
       dispatch(openLogin());
       return;
     }
-    // TODO: Stripe. The Firebase "Run Payments with Stripe" extension takes a
-    // write to users/{uid}/checkout_sessions and returns a redirect URL; that
-    // is the only piece of this page still missing.
-    setNotice("Checkout is not connected yet — Stripe is the next step.");
+    setBusy(true);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: selected, uid: user.uid, email: user.email }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.url) throw new Error(data.error || "Checkout failed");
+      window.location.href = data.url; // Stripe-hosted checkout
+    } catch (error) {
+      setNotice(error.message);
+      setBusy(false);
+    }
   };
 
   return (
@@ -146,8 +159,13 @@ export default function ChoosePlanPage() {
             ))}
 
             <div className="plan__cta--wrapper">
-              <button type="button" className="btn plan__cta--btn" onClick={onSubscribe}>
-                {plan.cta}
+              <button
+                type="button"
+                className="btn plan__cta--btn"
+                onClick={onSubscribe}
+                disabled={busy}
+              >
+                {busy ? "Opening checkout…" : plan.cta}
               </button>
               <div className="plan__disclaimer">{plan.smallPrint}</div>
               {notice && (
