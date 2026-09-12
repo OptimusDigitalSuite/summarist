@@ -560,3 +560,20 @@ button:disabled {
     display: none;
   }
 }
+
+/* ---------- mentor review: centre every section ----------
+   The supplied stylesheet centres .row but lets the blocks inside it sit at
+   their natural width, which reads as content hugging the left edge. Each
+   section wrapper becomes a centred column; children keep their full width so
+   no existing layout changes. */
+.container > .row,
+.row > .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container > .row > *,
+.row > .container > * {
+  width: 100%;
+}

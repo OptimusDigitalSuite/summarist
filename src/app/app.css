@@ -796,3 +796,31 @@
   font-size: 13px;
   text-align: center;
 }
+
+/* ---------- mentor review: the search had to survive a narrow screen ----------
+   The reviewer could not find the search on a tablet or a phone. The input kept
+   its 340px cap while the bar around it shrank, and the bar scrolled away with
+   the page, so below 900px the input now fills the bar and the bar stays put. */
+.app__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+}
+
+@media (max-width: 900px) {
+  .search__wrapper {
+    justify-content: stretch;
+    height: 64px;
+    padding: 0 16px;
+  }
+  .search__input--wrapper {
+    max-width: none;
+  }
+  .search__books--wrapper {
+    top: 60px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+  }
+}

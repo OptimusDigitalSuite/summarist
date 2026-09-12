@@ -209,3 +209,23 @@
   background: var(--color-banner);
   font-size: 13px;
 }
+
+/* ---------- mentor review: centre the sales page ----------
+   Same complaint as the home page, plus the three feature blocks, whose icon
+   and text did not line up under one another. */
+.plan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.plan > * {
+  width: 100%;
+}
+
+.plan__features {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
