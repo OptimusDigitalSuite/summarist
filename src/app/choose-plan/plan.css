@@ -229,3 +229,38 @@
   align-items: center;
   text-align: center;
 }
+
+/* ---------- polish pass ----------
+   The plan cards are the decision on this page, so the selected one is stated
+   with colour and depth rather than a dot alone, and the button that follows
+   behaves like something physical. */
+.plan__card {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+.plan__card:hover {
+  border-color: var(--color-brand-dark, #20ba68);
+}
+.plan__card--active {
+  box-shadow: 0 1px 2px rgba(3, 43, 65, 0.06), 0 10px 24px -16px rgba(3, 43, 65, 0.4);
+}
+.plan__card--price {
+  font-variant-numeric: tabular-nums;
+}
+.plan__cta--btn {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.plan__cta--btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.plan__card:focus-visible,
+.plan__cta--btn:focus-visible {
+  outline: 2px solid var(--color-brand-dark, #20ba68);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan__card,
+  .plan__cta--btn {
+    transition: none;
+  }
+}

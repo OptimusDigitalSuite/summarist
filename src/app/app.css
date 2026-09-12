@@ -824,3 +824,88 @@
     max-width: none;
   }
 }
+
+/* ---------- polish pass ----------
+   Shadows are tinted with the ink colour rather than black: a neutral-black
+   shadow on this blue-green page reads as grey haze, the tinted one reads as
+   depth. Everything here is additive — no layout or markup changes. */
+:root {
+  --shadow-card: 0 1px 2px rgba(3, 43, 65, 0.06), 0 8px 20px -12px rgba(3, 43, 65, 0.28);
+  --shadow-card-hover: 0 2px 4px rgba(3, 43, 65, 0.08), 0 16px 32px -16px rgba(3, 43, 65, 0.35);
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* A book is the thing you click most in this app, so it earns the one real
+   hover in the interface: a small lift, on transform and opacity only. */
+.for-you__recommended--books-link {
+  border-radius: 10px;
+  transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+}
+.for-you__recommended--books-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+.for-you__recommended--books-link:active {
+  transform: translateY(0);
+}
+.book__image {
+  border-radius: 8px; /* tighter than the card around it */
+}
+
+/* Titles set by hand rather than by luck: no orphaned last word, and figures
+   that line up in a column instead of dancing about. */
+.recommended__book--title,
+.book__title,
+.player__title {
+  text-wrap: balance;
+}
+.recommended__book--details-text,
+.audio__time,
+.book__stats--text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The Premium pill is a label, not a shout. */
+.book__pill {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Keyboard users get the same affordances as mouse users. */
+.for-you__recommended--books-link:focus-visible,
+.sidebar__link--wrapper:focus-visible,
+.search__input:focus-visible {
+  outline: 2px solid var(--color-brand-dark);
+  outline-offset: 3px;
+}
+.search__input:focus {
+  border-color: var(--color-brand-dark);
+  box-shadow: 0 0 0 3px rgba(43, 217, 124, 0.18);
+}
+
+/* An empty library should look composed rather than broken. */
+.library__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 40px 24px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-page-alt);
+  text-align: center;
+}
+
+.audio {
+  box-shadow: 0 -8px 24px -18px rgba(3, 43, 65, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .for-you__recommended--books-link,
+  .sidebar__link--wrapper {
+    transition: none;
+  }
+  .skeleton {
+    animation: none;
+  }
+}
