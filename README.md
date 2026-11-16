@@ -1,93 +1,85 @@
-# Summarist — FES Advanced Virtual Internship
+# Summarist
 
-Module 10 ch.05 of Front End Simplified. **Module 11 stays locked until a live deployment link is
-submitted here and a mentor approves it.** Submission is Bill's — mentor-reviewed credential work
-is never submitted by Claude.
+A book-summary web app: browse and search book summaries, read or listen to them in a custom
+audio player, save books to a personal library, and unlock premium titles with a subscription.
 
-Brief captured from the intro video: `identity/fes-module10-advanced-internship.md`.
+Built during the Frontend Simplified (FES) Advanced Virtual Internship from the program's design,
+home-page HTML/CSS and API spec. Approved by the program.
 
-## Stack
+**Live:** https://summarist-jet.vercel.app
 
-| Piece | Choice | Why |
-|---|---|---|
-| Framework | Next.js 16, App Router | What FES used |
-| Styling | Their `style.css` for the home page; Tailwind v4 + `@theme` tokens for the app pages | The home page is supplied as HTML/CSS — matching it beats re-inventing it |
-| State | **Redux Toolkit** | The video allows Zustand instead. Redux was chosen deliberately: it was just taught in ch.04, FES flags action-vs-reducer as an interview question, and job codebases run Redux. |
-| Auth | Firebase (email+password, guest, Google) | What FES used |
-| Payments | Stripe via the Firebase extension | What FES used |
-| Language | JavaScript | Every FES lesson ships JS. The PDF says "choose whatever technology you want", so TypeScript is allowed but not required — flipping later is mechanical. |
+## Features
 
-## Running it
+- **Authentication (Firebase)**: register, log in, Google sign-in, guest login and forgot
+  password in one modal, with clear messages for invalid email, short password and unknown user.
+- **Browsing**: "For You" page with a selected book plus recommended and suggested rows, premium
+  badges, and skeleton loading states.
+- **Search** by title or author with a 300 ms debounce and a results dropdown.
+- **Book page** with a gated Read/Listen: signed-out visitors get the login modal, premium books
+  send non-subscribers to the plans page, everyone else goes to the player.
+- **Player**: summary text plus a custom audio player (play/pause, skip ±10 s, draggable seek bar,
+  elapsed/total time). Finishing a book marks it as finished. The paywall is checked again on
+  the player page, so a typed-in URL can't skip it.
+- **Library** of saved and finished books, stored per user in Firestore.
+- **Subscriptions (Stripe, test mode)**: yearly and monthly plans via Stripe Checkout. Two
+  Next.js API routes create the checkout session and read the user's plan back
+  (`/api/checkout`, `/api/subscription`). Trialing subscriptions count as active.
+- **Settings** page showing the current plan and email, with an upgrade button for basic users.
+- **State management** with Redux Toolkit: slices for the auth modal and user, and RTK Query for
+  all book API calls.
+- **Responsive**: on small screens the sidebar becomes a drawer behind a hamburger menu.
+
+## Tech stack
+
+| Technology | Version |
+|---|---|
+| Next.js (App Router, API routes) | 16.2.10 |
+| React / React DOM | 19.2.4 |
+| Redux Toolkit / React Redux | 2.12.0 / 9.3.0 |
+| Firebase (Auth + Firestore) | 11.10.0 |
+| Stripe (Node SDK) | 22.6.2 |
+| Tailwind CSS (`@tailwindcss/postcss`) | 4.3.3 |
+| react-icons | 5.7.0 |
+| ESLint (`eslint-config-next`) | 9.39.5 (16.2.10) |
+| Language | JavaScript |
+| Hosting | Vercel |
+
+**Node.js:** 20.9.0 or newer (the minimum Next.js 16 requires). Built and tested on Node 24.14.1.
+
+## Getting started
 
 ```bash
+git clone https://github.com/OptimusDigitalSuite/summarist.git
+cd summarist
 npm install
-cp .env.local.example .env.local   # then fill in Firebase + Stripe keys
-npm run dev
+cp .env.local.example .env.local   # then fill in your own values
+npm run dev                        # http://localhost:3000
 ```
 
-Firebase console → Authentication → Sign-in method: enable **Email/Password** and **Google**, or
-those modal paths throw `auth/operation-not-allowed`. Guest login rides on Email/Password.
+Environment variables (`.env.local`):
 
-## What is built
+| Variable | Used for |
+|---|---|
+| `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase web app config |
+| `STRIPE_SECRET_KEY` | Stripe API (server only) |
+| `NEXT_PUBLIC_STRIPE_PRICE_YEARLY`, `NEXT_PUBLIC_STRIPE_PRICE_MONTHLY` | Stripe price IDs for the two plans |
+| `NEXT_PUBLIC_GUEST_EMAIL`, `NEXT_PUBLIC_GUEST_PASSWORD` | the guest-login account |
 
-- **Home page** — Frontend Simplified's own HTML/CSS, ported to components
-  (`src/components/home/`, their stylesheet as `src/app/home.css`), with the empty `img` tags
-  filled from `public/assets/` and react-icons in the icon slots. Both Login CTAs open the modal.
-- **Auth modal** — register, login, **documented guest login** (hardcoded dummy account), Google,
-  forgot-password, and the three error messages the spec names (invalid email, short password,
-  user not found). Escape closes, scroll locks, success redirects to `/for-you`.
-- **Redux** — `modalSlice` (which panel is open), `userSlice` (Firebase user + selectors),
-  `booksApi` (RTK Query, all four documented endpoints, with the middleware wired).
-- **Auth listener** — one `onAuthStateChanged` in `providers.jsx`, inside `<Provider>`,
-  unsubscribed on unmount.
-- **App shell** — route group `src/app/(app)/` carrying the sidebar (7 items, Highlights/Search/
-  Help & Support inert per spec) and the search bar (**300 ms debounce**, results dropdown → book
-  page). Home and `/choose-plan` sit outside the group, which is exactly the spec's rule.
-- **`/for-you`** — selected book, recommended and suggested rows, premium pills driven by
-  `subscriptionRequired`, skeleton loading states.
-- **`/book/:id`** — full content, and the documented gate on Read/Listen: signed out opens the
-  modal, premium-and-unsubscribed goes to `/choose-plan`, otherwise the player. Add-to-library
-  writes to Firestore.
-- **`/player/:id`** — summary with `white-space: pre-line`, and a custom audio player
-  (play/pause, ±10s, draggable seek, mm:ss times). Reaching the end marks the book finished.
-  The paywall is re-checked here, so a guessed URL cannot bypass it.
-- **`/settings`** — plan (Basic + upgrade button, or Premium/Premium-Plus), email, and the
-  logged-out state with the supplied image.
-- **`/library`** — saved and finished books from Firestore, with empty states.
-- **Book durations** — read from each MP3's metadata (not in the API), cached per URL.
-- **Mobile** — the sidebar becomes a drawer behind a hamburger, with an overlay to dismiss.
+Firebase setup:
 
-**API note worth keeping:** the docs say `getBooks?status=selected` returns a single object; the
-live API returns an **array of one**. `booksApi` unwraps either shape.
+1. Authentication > Sign-in method: enable **Email/Password** and **Google**.
+2. Authentication > Users: create the guest account that matches the guest variables.
 
-`userSlice.status` is four-valued on purpose — `loading`, `signedOut`, `guest`, `authenticated`.
-"Still asking Firebase" and "definitely nobody" look identical if you only store `user`.
+To test checkout, use Stripe's test card `4242 4242 4242 4242` with any future expiry and any CVC.
 
-## Payments
+Other scripts: `npm run build` (production build), `npm run lint`. There are no automated tests in
+this project.
 
-Stripe runs in **test mode** — no business details, no real charges. Two products, created via
-the API (`Premium Plus Yearly` $99.99/yr with a **7-day trial**, `Premium Monthly` $9.99/mo).
+## Notes
 
-Checkout goes through **Next API routes with the Stripe SDK**, not the Firebase Stripe
-extension — the extension needs the Blaze plan and a card on file with Google, and the brief
-only requires two working subscriptions.
-
-- `POST /api/checkout` — creates a Checkout Session and returns its URL. `client_reference_id`
-  carries the Firebase uid, which is the only link between a Firebase user and a Stripe
-  subscription.
-- `GET /api/subscription?uid=` — reads the plan back. Webhooks would need a public URL and a
-  signing secret; asking Stripe on load is the right trade at this size. `trialing` counts as
-  subscribed, which is the point of the trial.
-
-Test card: **4242 4242 4242 4242**, any future expiry, any CVC.
-
-## Still to build
-
-- Optional polish: the home page's active-heading effect
-
-## Before it runs
-
-1. `.env.local` from the example, with Firebase + Stripe keys
-2. Firebase → Authentication → Sign-in method: enable **Email/Password** and **Google**
-3. Firebase → Authentication → Users: **create the guest account** (`guest@gmail.com` /
-   `guest123`, or override via `NEXT_PUBLIC_GUEST_*`)
+- The API docs say `getBooks?status=selected` returns one object, but the live API returns an
+  array of one. `booksApi` handles both shapes.
+- The user's auth status has four values (`loading`, `signedOut`, `guest`, `authenticated`) so
+  "still checking with Firebase" never looks the same as "nobody is signed in".
+- Checkout uses Next.js API routes with the Stripe SDK instead of the Firebase Stripe extension,
+  which needs Firebase's paid Blaze plan.
